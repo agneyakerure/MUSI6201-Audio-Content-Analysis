@@ -9,5 +9,14 @@ function [rmsDb] = myComputeRmsDb(xb)
 
 %% Please insert your code here
 
+[blockSize, numBlocks] = size(xb);
+rmsDb = zeros(numBlocks, 1);
+
+for i = 1 : numBlocks
+    block = xb(:, i);
+    total = sum(block .* block);
+    rms = sqrt(total/blockSize);
+    rmsDb(i) = 20*(log(rms));
+end
 
 end

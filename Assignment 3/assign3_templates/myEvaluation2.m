@@ -24,8 +24,25 @@ if (m1~=m2)
 end
 
 %% Please write your code here, Follow the steps as per the comments
+diff = zeros(length(estimation), 1);
+len = length(estimation);
+ctr = 0;
 
+for n = 1 : len
+   if(annotation(n) ~= 0)
+      eMIDI = myFreq2MidiPitch(estimation(n));
+      aMIDI = myFreq2MidiPitch(annotation(n));
+      diff = 100 * abs(aMIDI - eMIDI);
+      diff(n) = diff;
+      ctr = ctr + 1;
+   end
+end
 
-
+diff2 = diff.^2;
+diffSum = sum(diff2);
+div = diffSum / ctr;
+errCentRms = sqrt(div);
+pfp = myGetFalsePositives(estimation, annotation);
+pfn = myGetFalseNegatives(estimation, annotation);
 
 end

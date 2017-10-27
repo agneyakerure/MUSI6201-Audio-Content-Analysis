@@ -10,17 +10,16 @@ function [X, binFreqs] = myComputeSpectrogram(xb, fs, fftLength)
 % 	binFreqs:	(floor(fftLength / 2) + 1 x 1) float vector, center frequencies(Hz) of all bins
 
 %% Please insert your code here
+[blockSize, numBlocks] = size(xb);
+binFreqs = (fs/(fftLength))*(1:(floor(fftLength / 2) + 1));
 
-[numBlocks, blockSize] = size(xb);
-windowMat = hann(blockSize);
-windowMat = windowMat * ones(1,numBlocks);
-binFreqs = (fs/(fftLength))*[1:(floor(fftLength / 2) + 1)];
 X = zeros(floor(fftLength / 2) + 1, numBlocks);
 
-% compute magnitude spectrogram 
-X = fft((xb' .* windowMat), fftLength); % compute fft after windowing
-%X = X(1:blockSize/2, :); % discard redundant part of the fft
-X = abs(X); % take magnitude
+for i = 1 : numBlocks
+    window = xb(:,i) .* hann(blockSize);
+    num = abs(fft(window, fftLength));
+    num = num(1:(floor(fftLength) / 2) + 1);
+    X(:,i) = num;
+end
 
-X = X'; % tranpose matrix so that it is as per the input configuration
 end

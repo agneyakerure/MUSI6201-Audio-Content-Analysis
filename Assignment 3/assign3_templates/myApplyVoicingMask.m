@@ -9,5 +9,5 @@ function [f0Adj] = myApplyVoicingMask(f0, mask)
 
 
 %% Please insert your code here
-
+f0Adj = f0 .* mask;
 end

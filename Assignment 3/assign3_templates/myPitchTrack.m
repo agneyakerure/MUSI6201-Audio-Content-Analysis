@@ -14,24 +14,17 @@ function [f0Adj, timeInSec] = myPitchTrack(x, blockSize, hopSize, fs, method, vo
 
 %% Select which pitch tracer to use based on 'method' parameter and compute f0
 if strcmp(method, 'acf')
-	[f0, timeInSec] = myPitchTrackAcf(x, blockSize, hopSize, fs); 
+	[f0, ~] = myPitchTrackAcf(x, blockSize, hopSize, fs); 
 elseif method == 'max'
-    [f0, timeInSec] = myPitchTrackMax(x, blockSize, hopSize, fs); 
+    [f0, ~] = myPitchTrackMax(x, blockSize, hopSize, fs); 
 elseif method == 'hps'
-    [f0, timeInSec] = myPitchTrackHps(x, blockSize, hopSize, fs); 
+    [f0, ~] = myPitchTrackHps(x, blockSize, hopSize, fs); 
 end
 
 %% Please insert your code here based on the following steps 
-% Block audio again (this is inefficient but required for reusing code)
-
-% Compute RMS of block 
-
-% Create voicing mask 
-
-% Apply voicing mask 
-
-
-
-
+[xb, timeInSec] = myBlockAudio(x, blockSize, hopSize, fs);
+rmsDb = myComputeRmsDb(xb);
+mask = myCreateVoicingMask(rmsDb, voicingThres);
+f0Adj = myApplyVoicingMask(f0, mask);
 
 end

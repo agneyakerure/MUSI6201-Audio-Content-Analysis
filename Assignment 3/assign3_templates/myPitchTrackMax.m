@@ -12,11 +12,34 @@ function [f0, timeInSec] = myPitchTrackMax(x, blockSize, hopSize, fs)
 
 
 %% Please write your code here. Follow the steps as per the comments
-% first block the audio and get the time-stamps per block (myBlockAudio)
 
-% compute the magnitude spectrogram (myComputeSpectrogram)
+[xb, timeInSec] = myBlockAudio(x, blockSize, hopSize, fs);
+[spec, binFreqs] = myComputeSpectrogram(xb, fs, blockSize);
+spec_size = size(spec);
+numBlocks = spec_size(2);
+f0 = zeros(numBlocks, 1);
 
-% compute f0 for each block by looking at the maximum of the spectrum of each block
-
+for i = 1 : numBlocks
+    [pks, ind] = findpeaks(spec(:,i));
+    len = length(pks);
+    max = -1;
+    maxInd = -1;
+    for peakInd = 1 : len
+        if maxInd == -1
+            max = pks(peakInd);
+            maxInd = ind(peakInd);
+        else
+            if pks(peakInd) > max
+                max = pks(peakInd);
+                maxInd = ind(peakInd);
+            end
+        end
+    end
+    if(max == -1)
+        f0(i) = 0;
+    else
+        f0(i) = binFreqs(maxInd);
+    end
+end
 
 end
