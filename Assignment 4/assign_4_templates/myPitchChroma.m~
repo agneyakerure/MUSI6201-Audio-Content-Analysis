@@ -27,18 +27,18 @@ end
 %% Please write your code here
 
 [m, ~] = size(X);
+oct = 3;
 midFreq = 440 * 2^((36-69+tf)/12);
 
 H = zeros(12, m);
 for i = 1 : 12
     bounds = [2^(-1/24), 2^(1/24)] * midFreq * 2 * (m-1)/fs;
-    for j = 1 : 3
-        binEdges = [ceil(2^(j-1)*bounds(1)), floor(2^(j-1)*bounds(2))];
-        H(i, binEdges(1):binEdges(2)) = 1/(binEdges(2)+1-binEdges(1));
+    for j = 1 : oct
+        bin_bounds = [ceil(2^(j-1)*bounds(1)), floor(2^(j-1)*bounds(2))];
+        H(i, bin_bounds(1):bin_bounds(2)) = 1/(bin_bounds(2)+1-bin_bounds(1));
     end
     midFreq = midFreq * 2^(1/12);
 end
-
 pitchChroma = H * X.^2;
 
 end

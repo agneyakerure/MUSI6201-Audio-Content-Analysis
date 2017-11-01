@@ -13,17 +13,17 @@ function [avgDeviation] = myEvaluateTF(pathToAudio, pathToGT)
 
 blockSize = 4096;
 hopSize = 2048;
-fs = 44100;
-audio_list = dir(strcat(pathToAudio,'*.wav'));
-gt_list = dir(strcat(pathToGT,'*.txt'));
-total_deviation = 0;
-for i = 1 : length(audio_list)
-   test_audio = audioread(strcat(pathToAudio,audio_list(i).name));
-   gt = textread(strcat(pathToGT, gt_list(i).name));
-   tf_estimate = myTuningFrequencyEstimate(test_audio, blockSize, hopSize, fs);
-   total_deviation = total_deviation + abs(tf_estimate - gt);
+
+audioFiles = dir(strcat(pathToAudio,'*.wav'));
+gtFiles = dir(strcat(pathToGT,'*.txt'));
+totalDeviation = 0;
+for i = 1 : length(audioFiles)
+   aud = audioread(strcat(pathToAudio,audioFiles(i).name));
+   gt = textread(strcat(pathToGT, gtFiles(i).name));
+   tf = myTuningFrequencyEstimate(aud, blockSize, hopSize, 44100);
+   totalDeviation = totalDeviation + abs(tf - gt);
 end
 
-avgDeviation = total_deviation / length(audio_list);
+avgDeviation = totalDeviation / length(audioFiles);
 
 end
