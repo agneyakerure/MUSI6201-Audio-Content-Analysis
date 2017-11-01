@@ -30,4 +30,19 @@ end
 
 %% Please write your code here
 
+f_ref = 440;
+[xb, ~] = myBlockAudio(x, blockSize, hopSize, fs);
+[~, numBlocks] = size(xb);
+window = repmat(hann(blockSize),1,numBlocks);
+xb = xb.*window;
+deviation = zeros(20 * numBlocks,1);
+for i = 1 : numBlocks
+    x_block_sig = xb(:,i);
+    spectralPeaks = mySpectralPeaks(x_block_sig);
+    spectralPeaks_Hz = spectralPeaks./blockSize*fs/2;
+    pitch_midi = 69 + 12 * log2(spectralPeaks_Hz/f_ref);
+    deviation((i-1)*20+1:i*20) = (round(pitch_midi)-pitch_midi)*100;
+end
+tf = mode(deviation);
+
 end

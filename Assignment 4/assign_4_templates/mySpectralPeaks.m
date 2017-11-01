@@ -14,7 +14,20 @@ end
 
 %% Please write your code here
 
-spectralPeaks = zeros(20);
+spec = abs(fft(x));
+[pks, ind1] = findpeaks(spec);
+[~, ind2] = sort(pks, 'descend');
 
+temp = zeros(20, 1);
+
+for i = 1 : 20
+    if length(ind2) < i
+        temp(i) = NaN; 
+    else
+        temp(i) = ind1(ind2(i));    
+    end
+end
+
+spectralPeaks = temp;
 
 end
