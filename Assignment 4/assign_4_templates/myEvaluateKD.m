@@ -12,38 +12,49 @@ function [accuracy] = myEvaluateKD(pathToAudio, pathToGT)
 
 blockSize = 4096;
 hopSize = 2048;
+fs = 44100;
 
 audioFiles = dir(strcat(pathToAudio,'*.au'));
 gtFiles = dir(strcat(pathToGT,'*.txt'));
 
+n = length(audioFiles);
+
+numTune = 0;
+numUntune = 0;
+
 major = char('A','A#','B','C','C#','D','D#','E','F','F#','G','G#');
 minor = char('a','a#','b','c','c#','d','d#','e','f','f#','g','g#');
 
-num1 = 0;
-num2 = 0;
-
-for i = 1 : length(audioFiles)
-   audio = audioread(strcat(pathToAudio, audioFiles(i).name));
+for i = 1 : n
+   test_audio = audioread(strcat(pathToAudio, audioFiles(i).name));
    gt = textread(strcat(pathToGT, gtFiles(i).name));
-   keyTrue = myKeyDetection(audio, blockSize, hopSize, 44100, true);
    
-   keyFalse = myKeyDetection(audio, blockSize, hopSize, 44100, false);
+   estTune = myKeyDetection(test_audio, blockSize, hopSize, fs, true);
+   estUntune = myKeyDetection(test_audio, blockSize, hopSize, fs, false);
+   
    if gt > 0
        if (gt + 1) > 12
-           gtChar = strcat(minor(gt-11,:),' min');
+           GT = strcat(minor(gt-11,:),' min');
        else
-           gtChar = strcat(major(gt+1,:),'Maj');
+           GT = strcat(major(gt+1,:),' Maj');
        end
-
-       if strcmp(gtChar, keyTrue)
-           num1 = num1 + 1;
+       
+       disp(GT);
+       disp(estTune);
+       disp(estUntune);
+       
+       if strcmp(GT, estTune)
+           numTune = numTune + 1;
        end
-       if strcmp(gtChar, keyFalse)
-           num2 = num2 + 1;
+       
+       if strcmp(GT, estUntune)
+           numUntune = numUntune + 1;
        end
+       
    end
+   
 end
 
-accuracy = [num1/length(audioFiles);num2/length(audioFiles)];
+accuracy = [numTune/length(audioFiles);numUntune/length(audioFiles)]
 
 end

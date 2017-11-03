@@ -16,8 +16,9 @@ hopSize = 2048;
 
 audioFiles = dir(strcat(pathToAudio,'*.wav'));
 gtFiles = dir(strcat(pathToGT,'*.txt'));
+n = length(audioFiles);
 totalDeviation = 0;
-for i = 1 : length(audioFiles)
+for i = 1 : n
    aud = audioread(strcat(pathToAudio,audioFiles(i).name));
    gt = textread(strcat(pathToGT, gtFiles(i).name));
    tf = myTuningFrequencyEstimate(aud, blockSize, hopSize, 44100);

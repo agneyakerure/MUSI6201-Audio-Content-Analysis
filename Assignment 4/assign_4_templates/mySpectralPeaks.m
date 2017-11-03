@@ -29,7 +29,5 @@ for i = 1 : 20
 end
 
 spectralPeaks = temp;
-% fft_x = abs(fft(x));
-% [~,indices] = findpeaks(fft_x, 'SortStr', 'descend');
-% spectralPeaks = indices(1:20);
+
 end

@@ -31,21 +31,24 @@ end
 %% Please write your code here
 
 [xb, ~] = myBlockAudio(x, blockSize, hopSize, fs);
-aFreq = 440;
 [~, n] = size(xb);
 
-window = repmat(hann(blockSize),1,n);
-xb = xb.*window;
+win = repmat(hann(blockSize),1,n);
+xb = xb.*win;
 
-dev = zeros(20 * n,1);
+deviation = zeros(n,1);
+
 for i = 1 : n
-    x_block_sig = xb(:,i);
-    specPeaks = mySpectralPeaks(x_block_sig);
-    specPeaks_HZ = specPeaks./blockSize*fs/2;
-    midi = 69 + 12 * log2(specPeaks_HZ/aFreq);
-    dev((i-1)*20+1:i*20) = (round(midi)-midi)*100;
+    
+    blockedSignal = xb(:,i);
+    spec = mySpectralPeaks(blockedSignal);
+    specHz = (spec-1)/(blockSize-1)*fs;
+    midi = 69 + 12 * log2(specHz/440);
+    
+    deviation(i) = round(mean(midi - round(midi))*100);
+    
 end
 
-tf = mode(dev);
+tf = mode(deviation);
 
 end

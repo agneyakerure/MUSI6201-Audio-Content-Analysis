@@ -26,19 +26,24 @@ end
 
 %% Please write your code here
 
-[m, ~] = size(X);
-midFreq = 440 * 2^((36-69+tf)/12);
+[fftLen, ~] = size(X);
 
-H = zeros(12, m);
+midFreq = 440 * 2^((48-69-tf)/12);
+H = zeros(12, fftLen);
+
 for i = 1 : 12
-    bounds = [2^(-1/24), 2^(1/24)] * midFreq * 2 * (m-1)/fs;
+    
+    bounds = [2^(-1/24), 2^(1/24)] * midFreq * 2 * (fftLen-1)/fs;
+    
     for j = 1 : 3
-        binEdges = [ceil(2^(j-1)*bounds(1)), floor(2^(j-1)*bounds(2))];
-        H(i, binEdges(1):binEdges(2)) = 1/(binEdges(2)+1-binEdges(1));
+        bin = [ceil(2^(j-1)*bounds(1)), floor(2^(j-1)*bounds(2))];
+        H(i, bin(1):bin(2)) = 1/(bin(2) + 1 - bin(1));
     end
+    
     midFreq = midFreq * 2^(1/12);
 end
 
 pitchChroma = H * X.^2;
+pitchChroma = pitchChroma ./ repmat(sum(pitchChroma,1), 12, 1);
 
 end
